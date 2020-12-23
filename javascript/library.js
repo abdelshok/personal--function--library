@@ -30,10 +30,10 @@
  * 
  * @mouseMove related event handler
  * Tracks the position (layerX and layerY) of the mouse and creates a 3D rotation effect on the element that it is attached to 
- * Accompanied by the @deactivate3DImageRotation below
+ * Accompanied by the @deactivate3DElementRotation below
  */
 
-function handle3DImageRotation (e) {
+function handle3DElementRotation (e) {
 
    /*
     * Get position of mouse cursor with respect to tehj element on mouse over
@@ -56,9 +56,11 @@ function handle3DImageRotation (e) {
 
     /* Generate string for CSS transform property */
     const effectString = `perspective(500px) scale(1.05) rotateX(${xRotation}deg) rotateY(${yRotation}deg)`
-    const transitionPropertyString = `transform .2s ease-in`;
+
+    // Note to self: Applying a transition here will trigger the transition duration and delay on every single mouse movement
+    // which will in turn result in a poor UI.
+
     /* Apply the calculated transformation */
-    // this.style.transition = transitionPropertyString;
     this.style.transform = effectString; // Should be able to access the element if 
 
 }
@@ -71,7 +73,7 @@ function handle3DImageRotation (e) {
  */
 
 
-function deactivate3DImageRotation (e) {
+function deactivate3DElementRotation (e) {
 
     this.style.transform = 'perspective(500px) scale(1) rotateX(0) rotateY(0)';
 
