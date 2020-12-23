@@ -8,7 +8,24 @@
  * 
  */
 
- 
+
+/**
+ * 
+ * The functions below are going to be subdivided into two categories. 
+ * Ones that are ** inherently ** linked to a certain event and ones that can be used
+ * in association to a number of events
+ * 
+ * Depending on their category, the description of the function prefacing the function itself
+ * will have @eventType tag in order to direct the user as to what events they can be associated to
+ * 
+ * E.g. @handle3DImageRotation function is inherently linked to the @mouseMove event as it tracks the cursor's
+ * layerX and layerY positions (it's position in relation to the previously positioned element). 
+ * It responds to changes in mouse position and as a result can not be associated to a @mouseover or @mouseout event
+ * 
+ * Pretty self-explanatory.
+ * 
+ */
+
 /**
  * 
  * @mouseMove related event handler
@@ -57,5 +74,47 @@ function handle3DImageRotation (e) {
 function deactivate3DImageRotation (e) {
 
     this.style.transform = 'perspective(500px) scale(1) rotateX(0) rotateY(0)';
+
+}
+
+
+// Opacity - Related Events
+
+
+/**
+ * 
+ * @increaseElementOpacity
+ * 
+ * @param {*} element: Takes in an object element (usually retrieved through document.getElementByID(elementID), etc.);
+ * @param {*} animationDuration
+ * @param {*} animationDelay
+ */
+
+function increaseElementOpacity(element, animationDuration, animationDelay) {
+
+    element.style.opacity = 1;
+    element.style.transition = `opacity ${animationDuration} ease-out ${animationDelay}`;
+
+}
+
+/**
+ * 
+ * @decreaseElementOpacity
+ * 
+ * @param {*} element: Takes in an object element (usually retrieved through document.getElementByID(elementID), etc.);
+ * @param {*} animationDuration
+ * @param {*} animationDelay
+ */
+
+
+function decreaseElementOpacity(element, animationDuration, animationDelay) {
+
+    if (enableLogging === true) {
+        console.log('Attempting to decrease element opacity');
+    }
+
+    element.style.opacity = 0;
+    // element.style.visibility = 'hidden'; // Doesn't tween bettween values 
+    element.style.transition = `opacity ${animationDuration} ease-out ${animationDelay}`;
 
 }
