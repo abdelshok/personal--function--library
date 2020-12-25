@@ -120,3 +120,49 @@ function decreaseElementOpacity(element, animationDuration, animationDelay) {
     element.style.transition = `opacity ${animationDuration} ease-out ${animationDelay}`;
 
 }
+
+// General Purpose
+
+function scrollToTop() {
+
+    // Note: remember that the scrolling smoothness depends on whether you've set up scroll-behavior on the parent element or html tag
+    window.scrollTo(0, 0);
+
+}
+
+// Viewport Related Elements
+
+function elementInViewport(elementID) {
+
+    let element = document.getElementById(elementID);
+    var bounding = element.getBoundingClientRect();
+
+    if (bounding.top >= 0 && bounding.left >= 0 && bounding.right <= (window.innerWidth || document.documentElement.clientWidth) && bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight)) {
+
+        if (enableLogging === true) {
+            console.log('Element is in the viewport!');
+        };
+
+    } else {
+        
+        if (enableLogging === true) {
+            console.log('Element is NOT in the viewport!');
+        };
+
+    }
+}
+
+// Optimization Higher Order Functions
+
+function throttle (callback, limit) {
+    let wait = false;                  // Initially, we're not waiting
+    return function () {               // We return a throttled function
+        if (!wait) {                   // If we're not waiting
+            callback.call();           // Execute users function
+            wait = true;               // Prevent future invocations
+            setTimeout(function () {   // After a period of time
+                wait = false;          // And allow future invocations
+            }, limit);
+        }
+    }
+}
