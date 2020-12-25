@@ -152,17 +152,29 @@ function elementInViewport(elementID) {
     }
 }
 
-// Optimization Higher Order Functions
+// Throttle & Debounce Higher Order Functions
+
+/**
+ * 
+ * @param {function} callback : Function called by the @throttle
+ * @param {integer} limit : Number of milliseconds that need to pass before the throttle function can call the callback
+ * 
+ * Notes: This is more of a skeleton of how a throttle function is implemented. The details of the @throttle function evidently
+ * need to be changed based on the specific goals and requirements of the UX / UI.
+ * 
+ * E.g. In a previous project, the throttle function needs to do an extra check and make sure that an element appeared on the bottom of
+ * the screen
+ */
 
 function throttle (callback, limit) {
     let wait = false;                  // Initially, we're not waiting
-    return function () {               // We return a throttled function
-        if (!wait) {                   // If we're not waiting
-            callback.call();           // Execute users function
-            wait = true;               // Prevent future invocations
-            setTimeout(function () {   // After a period of time
-                wait = false;          // And allow future invocations
-            }, limit);
-        }
+
+    if (!wait) {                   // If we're not waiting
+        callback.call();           // Execute users function
+        wait = true;               // Prevent future invocations
+        setTimeout(function () {   // After a period of time
+            wait = false;          // And allow future invocations
+        }, limit);
     }
+    
 }
