@@ -163,7 +163,7 @@ function elementInViewport(elementID) {
  * need to be changed based on the specific goals and requirements of the UX / UI.
  * 
  * E.g. In a previous project, the throttle function needs to do an extra check and make sure that an element appeared on the bottom of
- * the screen
+ * the screeng
  */
 
 function throttle (callback, limit) {
@@ -178,3 +178,18 @@ function throttle (callback, limit) {
     }
     
 }
+
+
+// TODO: 1. Fix the function, take the variable inglobal scope, etc. Apply naming 
+function debounce (func, delay) {
+
+    let inDebounce
+    const context = this
+    const args = arguments
+    clearTimeout(inDebounce)
+    inDebounce = setTimeout(() => func.apply(context, args), delay)
+    
+}
+
+// Debounce & Throttle Article: https://redd.one/blog/debounce-vs-throttle
+// Second article: https://codeburst.io/throttling-and-debouncing-in-javascript-b01cad5c8edf

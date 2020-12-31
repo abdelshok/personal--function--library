@@ -1,3 +1,41 @@
 
 
 /* Set of re-usable CSS styles that can be imported into any project. No time to be wasted re-inventing the wheel. */
+
+
+
+/* In order to achieve the effect where the text appears from below an invisible line all at once or sequentially
+
+1. Parent with relative position, set width or height, and overflow-y or overflow-x set to hidden
+2. Child p, h1, h2, etc. elements itself w/ transform set to the direction it needs to be hidden
+
+*/
+
+.parent { 
+    position: relative;
+    height: pixelsInput;
+    width: pixelsInput;
+    overflow-y: hidden; /* Or overflow-x: hidden */
+}
+
+/* One thing is important to mention here. 
+
+A. Height or width need to be set in pixels for the overflow to be correctly set. 
+This is most likely due to the fact that the engine needs to know a hard size in order to know when and at which point it should hide the children.
+A variable size set for %, vw, or vh would lead to unexpected results.
+
+*/
+
+.child { 
+    /* Set whatever styling is needed, color, text-align, font-size, etc. */
+    transform: translateY(100%); /* In this case, the text will be hidden in a downward direction and out of view */
+}
+
+/* 
+
+You can play with the actual transform here to hide higher on the Y axis (-100%) or along the X-axis instead.
+
+Note: When displaying the elements through an animation, the animated element needs to it's translation set to 0, which would bring it back to it's 
+original position, the one it was supposed to have before it was translated somewhere else.
+
+*/
