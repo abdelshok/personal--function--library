@@ -130,6 +130,41 @@ function scrollToTop() {
 
 }
 
+
+/**
+ * @keycodeOf #keycode #character #string
+ * 
+ * @param {string} character : As the name suggests. String of length 1.
+ * 
+ */
+
+function keycodeOf(character) {
+
+    let length = character.length;
+
+    if (length === 1) {
+
+        if (typeof character === 'string') {
+
+            let uppercaseChar = character.toUpperCase();
+
+            // There is only one charater so we return the first index.
+            return uppercaseChar.charCodeAt(0);
+    
+        } else {
+            
+            return undefined;
+
+        }
+
+    } else {
+        
+        return undefined;
+
+    }
+
+}
+
 // Viewport Related Elements
 
 function elementInViewport(elementID) {
