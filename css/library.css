@@ -2,7 +2,7 @@
 
 /* Set of re-usable CSS styles that can be imported into any project. No time to be wasted re-inventing the wheel. */
 
-
+/* TEXT APPEARANCE / DISAPPEARANCE EFFECTS */
 
 /* In order to achieve the effect where the text appears from below an invisible line all at once or sequentially
 
@@ -39,3 +39,35 @@ Note: When displaying the elements through an animation, the animated element ne
 original position, the one it was supposed to have before it was translated somewhere else.
 
 */
+
+/** LOADING EFFECTS **/
+
+/* Can be a div, section, main, etc. element */
+.parent {
+    width: pixelsInput;
+    height: pixelsInput;
+    position: relative, absolute, fixed;
+}
+
+/* Can be a div */
+.child {
+    width: pixelsInput;
+    height: pixelsInput;
+    border-radius: 50%;
+    border: 5px solid black;
+    border-left-color: grey;
+    background: transparent;
+    animation: rotate-s-loader 1s linear infinite;
+    margin: 6rem auto;
+}
+
+/* This keyframes need to be associated to it */
+
+@keyframes rotate-s-loader {
+from {
+  transform: rotate(0);
+}
+to {
+  transform: rotate(360deg);
+}
+}
