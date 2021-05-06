@@ -29,9 +29,7 @@ let speechRecognitionListening = false;
 // In order to do so, we need 
 if (typeof SpeechRecognition !== 'undefined') {
     
-    if (enableLogging === true) {
-        console.log('Speech Recognition API is compatible with this browser')
-    };
+    console.log('Speech Recognition API is compatible with this browser')
 
     recognition = new SpeechRecognition;
     recognition.continuous = true;
@@ -44,9 +42,7 @@ if (typeof SpeechRecognition !== 'undefined') {
     const voiceControlElement = document.getElementById('voice--control--text');
     voiceControlElement.innerHTML = 'Voice Control not available in this browser';
 
-    if (enableLogging === true) {
-        console.log('Voice control #voiceControl is not available in this browser');
-    };
+    console.log('Voice control #voiceControl is not available in this browser');
 
 }
 
@@ -57,10 +53,8 @@ const stopSpeechRecognition = () => {
     recognition.stop();
 
     // Don't forget to change the boolean to false so the text can appear afterwards
-    if (enableLogging === true) {
-        console.log('Speech recognition listening', speechRecognitionListening);
-        console.log('Recognition stopped')
-    };
+    console.log('@stopSpeechRecognition: Speech recognition listening', speechRecognitionListening);
+    console.log('@stopSpeechRecognition: Recognition stopped')
 
 }
 
@@ -70,9 +64,7 @@ const startSpeechRecognition = () => {
 
     if (speechRecognitionListening === false) {
 
-        if (enableLogging === true) {
-            console.log('@startSpeechRecognition: Toggling the voice directions.');
-        };
+        console.log('@startSpeechRecognition: Toggling the voice directions.');
 
         toggleVoiceControlDirections();
 
@@ -80,22 +72,17 @@ const startSpeechRecognition = () => {
 
     recognition.start();
 
-    if (enableLogging === true) {
-        console.log('@startSpeechRecognition: Listening.')
-    }
+    console.log('@startSpeechRecognition: Listening.')
 
 }
 
 const onSpeechRecognitionResult = (event) => {
 
-    if (enableLogging === true) {
-        console.log('@onSpeechRecognitionResult: Event of results of recognition is', event);
-    }
+    console.log('@onSpeechRecognitionResult: Event of results of recognition is', event);
 
     // Function returns an object that has the transcript of the user's speech, a confidence percentage of how accurate it is, and a boolean isFinal that 
     // indicates whether it is the last sentence mentioned by the user
     let finalResultObject = extractTextFromSpeech(event);
-
 
     // We push the object that shows the user command into an array in order to always be able to track all of the previous commands.
     // The SpeechRecognition API returns an array of objects continuously, constantly adding to the next index the new result, so we initially
@@ -103,22 +90,16 @@ const onSpeechRecognitionResult = (event) => {
     // of inactivity, which means that it'll be easier for us to track all the commands through an array
     arrayOfUserCommands.push(finalResultObject);
 
-    if (enableLogging === true) {
-        console.log('@onSpeechRecognitionResult: var(arrayOfUserCommands)', arrayOfUserCommands);
-    }
+    console.log('@onSpeechRecognitionResult: var(arrayOfUserCommands)', arrayOfUserCommands);
 
     let finalCommand = arrayOfUserCommands[VOICE_RESULTS_COUNTER];
 
-    if (enableLogging === true) {
-        console.log('@onSpeechRecognitionResult: var(VOICE_RESULTS_COUNTER):', VOICE_RESULTS_COUNTER);
-    }
+    console.log('@onSpeechRecognitionResult: var(VOICE_RESULTS_COUNTER):', VOICE_RESULTS_COUNTER);
 
     // Increment the counter every time so we know what's the index of the last element
     VOICE_RESULTS_COUNTER += 1;
 
-    if (enableLogging === true) {
-        console.log('@onSpeechRecognitionResult: Final Command Given by User: var(finalCommand)', finalCommand);
-    };
+    console.log('@onSpeechRecognitionResult: Final Command Given by User: var(finalCommand)', finalCommand);
 
     // Only trigger the analysis of the speech when the boolean returns true & if the confidence level is above 85%;
     if (finalResultObject.isFinal === true && finalResultObject.confidence > 0.65) {
@@ -182,17 +163,17 @@ const extractTextFromSpeech = (event) => {
     // results so that we can access them every time
     let resultObject = event.results[CURRENT_SPEECH_SESSION_COUNTER][0];
 
-    console.log('Last result object', resultObject);
+    console.log('@extractTextFromSpeech: Last var(resultObject)', resultObject);
 
     // Tells you if this event is the final speech given by the user
     let resultObjectFinal = event.results[CURRENT_SPEECH_SESSION_COUNTER].isFinal;
 
-    console.log('Current speech session counter is', CURRENT_SPEECH_SESSION_COUNTER);
+    console.log('@extractTextFromSpeech: Current speech session counter is', CURRENT_SPEECH_SESSION_COUNTER);
 
     // Increment the counter for the current session
     CURRENT_SPEECH_SESSION_COUNTER += 1;
 
-    console.log('Result object is', resultObject);
+    console.log('@extractTextFromSpeech: Result object is: var(resultObject) ', resultObject);
 
     let finalResult = {
         speech: resultObject.transcript,
@@ -200,19 +181,18 @@ const extractTextFromSpeech = (event) => {
         isFinal: resultObjectFinal,
     }
 
-    console.log('final result', finalResult)
-    console.log('Analyzing presence of string through index')
-
+    console.log('@extractTextFromSpeech: var(finalResult)', finalResult)
+    console.log('@extractTextFromSpeech: Analyzing presence of string through index')
 
     const { speech } = finalResult;
 
     let isStringPresent = speech.indexOf('deactivate voice control');
 
-    console.log('Is string present within speech', isStringPresent);
+    console.log('@extractTextFromSpeech: Is string present within speech', isStringPresent);
 
     if (finalResult.isFinal === true ) {
 
-        console.log('Object of speech results', finalResult);
+        console.log('@extractTextFromSpeech: Object of speech results: var(finalResult) ', finalResult);
 
         return finalResult;
 
@@ -269,15 +249,14 @@ const toggleVoiceControlDirections = () => {
 
 const analyzeSpeech = (speechResultObject) => {
 
-    console.log('About to analyzes speech');
-    console.log('Object given to analyzer is', speechResultObject);    
+    console.log('@analyzeSpeech: About to analyzes speech');
+    console.log('@analyzeSpeech: Object outputted from analyzer is', speechResultObject);    
 
     let { speech } = speechResultObject;
     speech = speech.toLowerCase();
     speech = speech.trim();
 
-    console.log('Speech is NOW', speech);
-    console.log('Speech extracted is', speech);
+    console.log('@analyzeSpeech: var(Speech) extracted is', speech);
 
     const mainMenuSpeech = 'go to main menu';
     const mainMenuSpeech2 = 'main menu';
@@ -346,6 +325,10 @@ const analyzeSpeech = (speechResultObject) => {
     console.log('Home Page 1 Finder', homePageFinder);
     console.log('Home Page 2 Finder', homePageFinder2);
     
+
+    // Replace @toggleGeneralPageTransition with whichever function is used to transition / switch between pages
+    // Note: If any of these values is ≠ than 1, then the word has been been detected within the speec recognition 
+    // analyzer
     if (mainMenuFinder != -1) {
         toggleGeneralPageTransition('menuPage');
     } else if (aboutPageFinder != -1) {
