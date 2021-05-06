@@ -6,6 +6,47 @@
  * 
  */
 
+/*
+ * Voice Control Area 
+ */
+
+
+let USER_DECIDED_TO_DEACTIVATE = false;
+
+const triggerEndOfSpeechRecognition = () => {
+
+    // We reset it to 0 so that next time the user actually talks to the speech recognition API we know which index we're at
+    // and where to get the latest actual command given
+
+    if (enableLogging === true) {
+        console.log('Speech recognition service has disconnected successfully');
+        console.log('DID USER DECIDE TO DEACTIVATE', USER_DECIDED_TO_DEACTIVATE);
+    }
+
+    CURRENT_SPEECH_SESSION_COUNTER = 0;
+
+    if (USER_DECIDED_TO_DEACTIVATE === false) {
+        // Restart speech recognition
+        speechRecognitionListening = true;
+        startSpeechRecognition();
+    } else if (USER_DECIDED_TO_DEACTIVATE === true) {
+        speechRecognitionListening = true; 
+    }
+
+    // Reset the constant above to false so that the user can click again
+    USER_DECIDED_TO_DEACTIVATE = false;
+
+}
+
+const triggerStartOfSpeechRecognition = () => {
+
+    if (enableLogging === true) {
+        console.log('Speech recognition service has started successfully');
+    }
+
+}
+
+
 // VOICE_RESULTS_COUNTER sometimes is higher than the actual count because the SpeechRecognition API does not run continuously for some reason 
 
 let VOICE_RESULTS_COUNTER = 0;
@@ -46,7 +87,37 @@ if (typeof SpeechRecognition !== 'undefined') {
 
 }
 
-// Event that triggers the speech to text recognition when the voice control is clicked 
+/**
+ * 
+ * Events attached to the element triggering / stopping the speech recognition API
+ *
+ */
+
+// Step 2.A : Honestly, do I really need to explain this one?
+
+const startSpeechRecognition = () => {
+
+    console.log('@startSpeechRecognition: Starting speech recognition')
+
+    // Use this conditional in order to change the actual directions of the element 
+    // Show the different directions the user can give to the analyzer
+    if (speechRecognitionListening === false) {
+
+        console.log('@startSpeechRecognition: Toggling the voice directions.');
+
+        toggleVoiceControlDirections();
+
+    }
+
+    // Starts the analyzer
+    recognition.start();
+    
+    console.log('@startSpeechRecognition: Listening.')
+
+}
+
+// Step 2.B : If the element toggling speech recognition is active then it will 
+// As the name suggests
 
 const stopSpeechRecognition = () => {
 
@@ -58,23 +129,6 @@ const stopSpeechRecognition = () => {
 
 }
 
-const startSpeechRecognition = () => {
-
-    console.log('@startSpeechRecognition: Starting speech recognition')
-
-    if (speechRecognitionListening === false) {
-
-        console.log('@startSpeechRecognition: Toggling the voice directions.');
-
-        toggleVoiceControlDirections();
-
-    }
-
-    recognition.start();
-
-    console.log('@startSpeechRecognition: Listening.')
-
-}
 
 const onSpeechRecognitionResult = (event) => {
 
@@ -92,6 +146,9 @@ const onSpeechRecognitionResult = (event) => {
 
     console.log('@onSpeechRecognitionResult: var(arrayOfUserCommands)', arrayOfUserCommands);
 
+    // After we get the last speech string detected by the Speech Recognition API, we add it to the var(arrayOfUserCommands) <Array>. Since we are always tracking
+    // through the counter how many directions were given, we are able to always access the last one - although, now that I think about it, we could simply access
+    // by directly going for the last index [-1]
     let finalCommand = arrayOfUserCommands[VOICE_RESULTS_COUNTER];
 
     console.log('@onSpeechRecognitionResult: var(VOICE_RESULTS_COUNTER):', VOICE_RESULTS_COUNTER);
@@ -103,56 +160,62 @@ const onSpeechRecognitionResult = (event) => {
 
     // Only trigger the analysis of the speech when the boolean returns true & if the confidence level is above 85%;
     if (finalResultObject.isFinal === true && finalResultObject.confidence > 0.65) {
+
+        // This function looks to see if there is specific commands inside of the last direction given
         analyzeSpeech(finalCommand);
+
     };
 
 }
 
-// Add Event listener to speech recognition
-// recognition.addEventListener('result', onSpeechRecognitionResult);
 
-// const activateVoiceControl = () => {
+const activateVoiceControl = () => {
 
-//     console.log('Activating voice control');
-//     let voiceControlElement = document.getElementById('disabilitiesRelatedText');
+    console.log('Activating voice control');
+    let voiceControlElement = document.getElementById('disabilitiesRelatedText');
 
-//     if (typeof SpeechRecognition === 'undefined') {
-//         const voiceControlElement = document.getElementById('voiceControlText');
-//         voiceControlElement.innerHTML = 'Voice Control not available in this browser';
-//         console.log('Voice control #voiceControl is not available in this browser');
-//     } else {
+    if (typeof SpeechRecognition === 'undefined') {
+        const voiceControlElement = document.getElementById('voiceControlText');
+        voiceControlElement.innerHTML = 'Voice Control not available in this browser';
+        console.log('Voice control #voiceControl is not available in this browser');
+    } else {
 
 
-//         // Toggle The Voice Control Directions so the user knows what to say in order to navigate the website
-//         // toggleVoiceControlDirections();
+        // Toggle The Voice Control Directions so the user knows what to say in order to navigate the website
+        // toggleVoiceControlDirections();
 
-//         // let listening  = false;
-//         // const recognition = new SpeechRecognition;
+        // let listening  = false;
+        // const recognition = new SpeechRecognition;
 
-//         // const start = () => {
+        // const start = () => {
 
-//         // };
+        // };
 
-//         // const stop = () => {
+        // const stop = () => {
 
-//         // };
+        // };
 
+        // voiceControlElement.addEventListener('click', () => {
+        //     listening ? stop() : start();
+        //     listening = !listening;
+        // });
 
-
-        
-
-//         // voiceControlElement.addEventListener('click', () => {
-//         //     listening ? stop() : start();
-//         //     listening = !listening;
-//         // });
-
-//     }
+    }
 
 
-// }
+}
 
 
-// Utility Function that extracts the final result from the speech recognition
+/**
+ * 
+ * Utility Function that extracts the final result from the speech recognition
+ * Called in @onSpeechRecognitionResult - which is the callback associated with the 'result'
+ * event of the Speech Recognition API
+ * 
+ * @return {Object} finalResult object with three properties: 1. the actual final speech 2. the confidence the analyzer has in it's own accuracy
+ * and 3. whether or not the speech / string given is the final one  
+ * 
+ * */ 
 
 const extractTextFromSpeech = (event) => {
     
@@ -165,7 +228,7 @@ const extractTextFromSpeech = (event) => {
 
     console.log('@extractTextFromSpeech: Last var(resultObject)', resultObject);
 
-    // Tells you if this event is the final speech given by the user
+    // Tells you if this object / event is the final speech / directions given by the user
     let resultObjectFinal = event.results[CURRENT_SPEECH_SESSION_COUNTER].isFinal;
 
     console.log('@extractTextFromSpeech: Current speech session counter is', CURRENT_SPEECH_SESSION_COUNTER);
@@ -190,17 +253,18 @@ const extractTextFromSpeech = (event) => {
 
     console.log('@extractTextFromSpeech: Is string present within speech', isStringPresent);
 
+    // If the last analyzed speech is the final one decided by the analyzer, we return it. 
+    // We don't return any object if Speech Recognition API has not deemed it.
     if (finalResult.isFinal === true ) {
 
         console.log('@extractTextFromSpeech: Object of speech results: var(finalResult) ', finalResult);
-
         return finalResult;
 
     };
 
     return finalResult;
 
-}
+};
 
 const deactivateVoiceControl = () => {
 
@@ -227,9 +291,9 @@ const toggleVoiceControl = () => {
     let voiceControlElement = document.getElementById('disabilitiesRelatedText');
     voiceControlElement.classList.toggle('showing');
 
-}
+};
 
-// Animation to show the second part of voice control for the website
+// Animation to show the directions that can be used to control the website 
 
 const toggleVoiceControlDirections = () => {
 
@@ -247,12 +311,25 @@ const toggleVoiceControlDirections = () => {
 };
 
 
+/***
+ * 
+ * Utility function that tracks to see whether certain keywords are present in the last speech string retrieved by the Speech Recogition
+ * API, and in turn triggers certain events within the web page
+ * 
+ * @param {speechResultObject} : Contains three properties, the most important one of which is the speech string representing the user's 
+ * last command
+ * 
+ * @return {Void}
+ * 
+ * 
+ */
 const analyzeSpeech = (speechResultObject) => {
 
     console.log('@analyzeSpeech: About to analyzes speech');
     console.log('@analyzeSpeech: Object outputted from analyzer is', speechResultObject);    
 
     let { speech } = speechResultObject;
+
     speech = speech.toLowerCase();
     speech = speech.trim();
 
@@ -276,13 +353,11 @@ const analyzeSpeech = (speechResultObject) => {
     const contactPageSpeech4 = 'contactpage';
     const contactPageSpeech5 = 'go back to contact page';
 
-
     const clientPageSpeech = 'go to client page';
     const clientPageSpeech2 = 'go to clientpage';
     const clientPageSpeech3 = 'client page';
     const clientPageSpeech4 = 'clientpage';
     const clientPageSpeech5 = 'go back to client page';
-
 
     const homePageSpeech = 'go to home page';
     const homePageSpeech2 = 'go to homepage';
@@ -293,7 +368,6 @@ const analyzeSpeech = (speechResultObject) => {
     const deactivateSpeech = 'deactivate voice control';
     const deactivateSpeech2 = 'Deactivate voice control';
     const deactivateSpeech3 = 'deactivate voicecontrol';
-
 
     // if (speech === mainMenuSpeech || speech === mainMenuSpeech2 || speech === mainMenuSpeech3 || speech === mainMenuSpeech4 || speech === mainMenuSpeech5) {
     //     toggleMenuAnimation();
@@ -325,11 +399,11 @@ const analyzeSpeech = (speechResultObject) => {
     console.log('Home Page 1 Finder', homePageFinder);
     console.log('Home Page 2 Finder', homePageFinder2);
     
-
     // Replace @toggleGeneralPageTransition with whichever function is used to transition / switch between pages
     // Note: If any of these values is ≠ than 1, then the word has been been detected within the speec recognition 
     // analyzer
     if (mainMenuFinder != -1) {
+        // Replace any of the one below with the correct event handler - this is just boilerplate
         toggleGeneralPageTransition('menuPage');
     } else if (aboutPageFinder != -1) {
         toggleGeneralPageTransition('aboutPage');
@@ -344,4 +418,28 @@ const analyzeSpeech = (speechResultObject) => {
         deactivateVoiceControl();
     }
 
-}
+};
+
+
+// You have to apply the same logic when you attach the event listeners to whichever element is going to trigger the 
+// start of the speech recognition
+
+// Step 1.
+document.getElementById(idOfElement).addEventListener('touchstart', () => {
+
+    // Based on whether it is already listening / active or not, we decide to start or stop the speech recognition
+    speechRecognitionListening ? stopSpeechRecognition() : startSpeechRecognition();
+    speechRecognitionListening = !speechRecognitionListening;
+
+    if (enableLogging === true) {
+        console.log('Speech recognition listening', speechRecognitionListening);
+    }
+
+}, {passive: true});
+
+
+// Step 1.5: Attach event listener to the recognition API so that when it gets the results, it actually
+// does something with it
+// ***Very*** important: 
+
+recognition.addEventListener('result', onSpeechRecognitionResult);
