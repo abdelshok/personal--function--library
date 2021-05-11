@@ -10,8 +10,49 @@
  * Voice Control Area 
  */
 
+/**
+ * 
+ * CONSTANTS
+ * 
+ **/
 
-let USER_DECIDED_TO_DEACTIVATE = false;
+ * CONSTANTS
+ */
+
+// Reminder: JS naming convention --> global JS variable @ top of file, camelCase if mutable, UPPERCASE if immutable
+
+let userDecidedToDeactivate = false;
+
+// voiceResultsCounter sometimes is higher than the actual count because the SpeechRecognition API does not run continuously for some reason 
+let voiceResultsCounter = 0;
+let currentSpeechSessionCounter = 0;
+
+// Array that stores all the commands spoken by the user
+let arrayOfUserCommands = [];
+
+// Check if speech recognition API exists on the existing browser
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+// Variable that will be holding the speech recognition API
+// @global : these need to be global variables.
+
+let recognition;
+let speechRecognitionListening = false;// Check if speech recognition API exists on the existing browser
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+// Variable that will be holding the speech recognition API
+// @global : these need to be global variables.
+
+let recognition;
+let speechRecognitionListening = false;
+
+/**
+ * 
+ * END OF CONSTANTS
+ * 
+ **/ 
 
 const triggerEndOfSpeechRecognition = () => {
 
@@ -20,21 +61,21 @@ const triggerEndOfSpeechRecognition = () => {
 
     if (enableLogging === true) {
         console.log('Speech recognition service has disconnected successfully');
-        console.log('DID USER DECIDE TO DEACTIVATE', USER_DECIDED_TO_DEACTIVATE);
+        console.log('DID USER DECIDE TO DEACTIVATE', userDecidedToDeactivate);
     }
 
-    CURRENT_SPEECH_SESSION_COUNTER = 0;
+    currentSpeechSessionCounter = 0;
 
-    if (USER_DECIDED_TO_DEACTIVATE === false) {
+    if (userDecidedToDeactivate === false) {
         // Restart speech recognition
         speechRecognitionListening = true;
         startSpeechRecognition();
-    } else if (USER_DECIDED_TO_DEACTIVATE === true) {
+    } else if (userDecidedToDeactivate === true) {
         speechRecognitionListening = true; 
     }
 
     // Reset the constant above to false so that the user can click again
-    USER_DECIDED_TO_DEACTIVATE = false;
+    userDecidedToDeactivate = false;
 
 }
 
@@ -46,25 +87,6 @@ const triggerStartOfSpeechRecognition = () => {
 
 }
 
-
-// VOICE_RESULTS_COUNTER sometimes is higher than the actual count because the SpeechRecognition API does not run continuously for some reason 
-
-let VOICE_RESULTS_COUNTER = 0;
-let CURRENT_SPEECH_SESSION_COUNTER = 0;
-
-// Array that stores all the commands spoken by the user
-
-let arrayOfUserCommands = [];
-
-// Check if speech recognition API exists on the existing browser
-
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-// Variable that will be holding the speech recognition API
-// @global : these need to be global variables.
-
-let recognition;
-let speechRecognitionListening = false;
 
 // If it is not undefined, we set all the event listeners in order to trigger the speech recognition
 // In order to do so, we need 
@@ -149,12 +171,12 @@ const onSpeechRecognitionResult = (event) => {
     // After we get the last speech string detected by the Speech Recognition API, we add it to the var(arrayOfUserCommands) <Array>. Since we are always tracking
     // through the counter how many directions were given, we are able to always access the last one - although, now that I think about it, we could simply access
     // by directly going for the last index [-1]
-    let finalCommand = arrayOfUserCommands[VOICE_RESULTS_COUNTER];
+    let finalCommand = arrayOfUserCommands[voiceResultsCounter];
 
-    console.log('@onSpeechRecognitionResult: var(VOICE_RESULTS_COUNTER):', VOICE_RESULTS_COUNTER);
+    console.log('@onSpeechRecognitionResult: var(voiceResultsCounter):', voiceResultsCounter);
 
     // Increment the counter every time so we know what's the index of the last element
-    VOICE_RESULTS_COUNTER += 1;
+    voiceResultsCounter += 1;
 
     console.log('@onSpeechRecognitionResult: Final Command Given by User: var(finalCommand)', finalCommand);
 
@@ -168,6 +190,15 @@ const onSpeechRecognitionResult = (event) => {
 
 }
 
+
+/**
+ * 
+ * @deprecated
+ * 
+ * Not used anymore within the application, as opposed to the deactivateVoiceControl function, which is still used
+ * when the user gives the order to deactivate the Speech Recognition API
+ * 
+ */
 
 const activateVoiceControl = () => {
 
@@ -222,19 +253,19 @@ const extractTextFromSpeech = (event) => {
     // Always gets the last result 
     // SpeechRecognition API adds all the results to the same array, so we have to make sure to always get the latest element of the array
 
-    // VOICE_RESULTS_COUNTER = counts the amount of commands given to the SpeechRecognition API. Used to keep track of the different indices of the
+    // voiceResultsCounter = counts the amount of commands given to the SpeechRecognition API. Used to keep track of the different indices of the
     // results so that we can access them every time
-    let resultObject = event.results[CURRENT_SPEECH_SESSION_COUNTER][0];
+    let resultObject = event.results[currentSpeechSessionCounter][0];
 
     console.log('@extractTextFromSpeech: Last var(resultObject)', resultObject);
 
     // Tells you if this object / event is the final speech / directions given by the user
-    let resultObjectFinal = event.results[CURRENT_SPEECH_SESSION_COUNTER].isFinal;
+    let resultObjectFinal = event.results[currentSpeechSessionCounter].isFinal;
 
-    console.log('@extractTextFromSpeech: Current speech session counter is', CURRENT_SPEECH_SESSION_COUNTER);
+    console.log('@extractTextFromSpeech: Current speech session counter is', currentSpeechSessionCounter);
 
     // Increment the counter for the current session
-    CURRENT_SPEECH_SESSION_COUNTER += 1;
+    currentSpeechSessionCounter += 1;
 
     console.log('@extractTextFromSpeech: Result object is: var(resultObject) ', resultObject);
 
@@ -269,19 +300,22 @@ const extractTextFromSpeech = (event) => {
 const deactivateVoiceControl = () => {
 
     // First we reset all the counters to 0, flush out the array, and after that we stop the voice control
-    VOICE_RESULTS_COUNTER = 0;
-    CURRENT_SPEECH_SESSION_COUNTER = 0;
+    voiceResultsCounter = 0;
+    currentSpeechSessionCounter = 0;
     arrayOfUserCommands = [];
 
     stopSpeechRecognition();
 
     // Second we toggle the class so that it looks like what it is supposed to look with 'Activate Voice Control'
-    document.getElementById('directionsVoiceControl').classList.toggle('showing');
-    document.getElementById('disabilitiesRelatedText').classList.toggle('showing');
+    // document.getElementById('directionsVoiceControl').classList.toggle('showing');
+    // document.getElementById('disabilitiesRelatedText').classList.toggle('showing');
+
+    // Toggle the HTML elements
 
 };
 
 // Animation in order to show / hide the voice control for the website
+// HTML / CSS event related functions
 
 const toggleVoiceControl = () => {
 
@@ -381,7 +415,7 @@ const analyzeSpeech = (speechResultObject) => {
     //     toggleMenuAnimation();
     // } else if (speech === deactivateSpeech || speech === deactivateSpeech2 || speech === deactivateSpeech3) {
     //     // By switching this to true, we prevent it from starting again automatically
-    //     USER_DECIDED_TO_DEACTIVATE = true;
+    //     userDecidedToDeactivate = true;
     //     deactivateVoiceControl();
     // }
 
@@ -404,17 +438,17 @@ const analyzeSpeech = (speechResultObject) => {
     // analyzer
     if (mainMenuFinder != -1) {
         // Replace any of the one below with the correct event handler - this is just boilerplate
-        toggleGeneralPageTransition('menuPage');
+
     } else if (aboutPageFinder != -1) {
-        toggleGeneralPageTransition('aboutPage');
+
     } else if (contactPageFinder != -1) {
-        toggleGeneralPageTransition('contactPage');
+
     } else if (clientPageFinder != -1) {
-        toggleGeneralPageTransition('clientPage');
+
     } else if (homePageFinder != -1 || homePageFinder2 != -1) {
-        toggleGeneralPageTransition('homePage');
+
     } else if (speech === deactivateSpeech) {
-        USER_DECIDED_TO_DEACTIVATE = true;
+        userDecidedToDeactivate = true;
         deactivateVoiceControl();
     }
 
