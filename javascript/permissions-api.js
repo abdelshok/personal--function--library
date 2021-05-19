@@ -70,11 +70,17 @@ function trackUserPermissionChanges () {
                 const newState = event.target.state;
 
                 if (newState === 'denied') {
-                    console.log('why did you decide to block us?')
+
+                    deactivateUIElements();
+
                 } else if (newState === 'granted') {
-                    console.log('We will be together forever!')
+
+                    activateUIElements();
+                    
                 } else {
+
                     console.log('Thanks for reverting things back to normal')
+
                 };
 
             }
@@ -115,5 +121,33 @@ function trackUserPermissionChanges () {
         })
 
     })
+
+}
+
+/***
+ * 
+ * Helper Functions to the one above
+ * 
+ * We'll be tracking changes to the user permissions in order to be able to react to them in some way
+ * Most likely, we'll be making some changes to the UI, if the UI previously reflected the state of the API currently being used.
+ * In other cases, we might use that opportunity to send messages to a different API, for example, to track how many users have enabled
+ * microphone permission.
+ * 
+ * @example Spotify uses microphone access now in order to, I'm assuming, give song requests. Tracking the change in Permissions would then
+ * be useful in order to show that the microphone has been deactivated were the user to do so by revoking all authorizations instead of simply
+ * clicking on 'Off'
+ * 
+ * 
+ */
+
+function deactivateUIElements () {
+
+    // Code here
+
+}
+
+function activateUIElements () {
+
+    // Code here
 
 }
