@@ -15,6 +15,7 @@
  * 
  * @param {string} email Do I really need to explain.
  * @returns Boolean, specifying whether the email has the right pattern
+ * 
  */
 function validateEmail(email) 
 {
