@@ -1,0 +1,15 @@
+/* Cubic Bezier functions are easing functions used throughout 
+CSS in order to specify how an animation should accelerate, deccelerate,
+or bot */
+
+/* The list below will contain a number of cubic-bezier functions */
+
+/* 
+
+Accelerates quickly, goes slightly over the goal / edge, and quickly comes down
+
+https://cubic-bezier.com/#.17,.67,.75,1.
+
+cubic-bezier(.17,.67,.75,1.17)
+
+*/
