@@ -12,6 +12,8 @@ These resources should be used before and throughout the deployment of a website
 
 - [Optimize SVGs](https://petercollingridge.appspot.com/svg-optimiser)
 - [Test Load Time & Website Security ](https://testmysite.io/) (Provided by Netlify)
+- [Use JSHintt to lint code]()
+- After lint issues, use [Google Closure Compiler](https://closure-compiler.appspot.com/) to minify
 
 ### Marketing
 
