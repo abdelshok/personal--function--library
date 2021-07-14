@@ -8,8 +8,10 @@ In addition to functions, classes, and other types of entities, I'll also list h
 
 ### Optimization
 
-- [Optimize SVGs](https://petercollingridge.appspot.com/svg-optimiser)
+These resources should be used before and throughout the deployment of a website, in order to ensure minimum load times, high security, and therefore, maximum conversions.
 
+- [Optimize SVGs](https://petercollingridge.appspot.com/svg-optimiser)
+- [Test Load Time & Website Security ](https://testmysite.io/) (Provided by Netlify)
 
 ### Marketing
 
@@ -41,4 +43,3 @@ I'll list them here, for myself, with potential comments. More importantly, I'll
     * Find some friends and braistorm potential solutions to the problem. Pick people that are fun to brainstorm with, not that reject potential soutions. You need to have that spark. People who also brainstorm feel more ownership over solution, which helps later on.
     * Turn spark into a fucking fire. Work teotgether and build anMVP. resist temptation to build complete solution. Build stripped down version and see whether users actually want to use it. 
     * **Addendum**: Good investors are interested in teams currently in process of executing their idea and tend to shy away from teams that are just pitching their idea. 
-    
