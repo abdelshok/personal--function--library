@@ -37,6 +37,7 @@ var isIE = /*@cc_on!@*/false || !!document.documentMode;
 var isEdge = !isIE && !!window.StyleMedia;
 
 // Chrome 1 - 79
+// Comment by Abdel: Not reliable for Chrome - could be due to the fact that the newer versions are not being checked for...
 var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
 
 // Edge (based on chromium) detection
