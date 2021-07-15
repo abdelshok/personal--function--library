@@ -81,6 +81,12 @@ let inDebounce; // Used for the debounce function (as implied by comment above)
  * Detects user scroll direction on a page with fixed / absolute length
  * and no inherent scrolling behavior
  * 
+ * The handler below should call to helper functions:
+ * 1. @debounce - which does the job we described it should do 
+ * 2. @detectUserScrollDirection - which simply takes an argument (the deltaY) and sets the global variable
+ * to a certain value
+ * 
+ * After the debounce function runs, we 
  * 
  */
 
@@ -93,7 +99,6 @@ function detectScrollOnFixedPage (event) {
    let delay = 500; // Delay can obviously be changed to be longer
 
    debounce(detectUserScrollDirection(deltaY), delay);
-
 
 }
 
