@@ -96,3 +96,22 @@ function detectBrowser () {
     isBlink = (isChrome || isOpera) && !!window.CSS;
 
 }
+
+
+/**
+ * 
+ * Sames as above function but less variables and only focused on Safari
+ * 
+ * Note to Future Self (NTFS: It is always better to check for the presence of a certain function than to check the user agent.
+ * User agent can be modified. More importantly, a lot of these user agents, since the Netscape wars, also have within them references
+ * to other browsers, etc. 
+ * 
+ * Another note --> Browsers on iOS are essentially Safari that has been wrapped with additional code, functionality, and a different design.
+ * This means that calling the below function on Mobile Chrome will still return true, as it is Safari at the lowest level.
+ * 
+ */
+
+let isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
+            navigator.userAgent &&
+            navigator.userAgent.indexOf('CriOS') == -1 &&
+            navigator.userAgent.indexOf('FxiOS') == -1;
